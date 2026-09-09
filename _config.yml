@@ -1,0 +1,26 @@
+title: Zero2Leetcode
+description: 从零基础Python到LeetCode中等难度的系统性学习平台
+url: https://onefly.top
+markdown: kramdown
+baseurl: /zero2Leetcode
+reactions_api: "https://zero2pm-reactions.ranxi169.workers.dev"
+
+plugins:
+  - jekyll-sitemap
+
+include:
+  - 00_python_basics
+  - 01_data_structures
+  - 02_algorithms
+  - 03_leetcode_practice
+  - 04_real_interviews
+  - docs
+  - _data
+
+exclude:
+  - README.md
+  - requirements.txt
+  - tests
+  - tools
+  - "*.py"
+  - __pycache__

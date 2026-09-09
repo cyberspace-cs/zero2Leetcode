@@ -1,0 +1,59 @@
+# 依赖和缓存
+node_modules/
+__pycache__/
+*.pyc
+.pytest_cache/
+_site
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 本地测试
+*.log
+
+# 环境变量（含敏感信息）
+.env
+
+# Claude Code 本地配置
+**/.claude/settings.local.json
+.claude/skills/*/skills.md
+.claude/skills/local-dev/
+.claude/skills/leetcode-blog-writer/
+.claude/skills/crawl-wechat/output/
+.claude/skills/cnblogs-publisher/TEMP_PROGRESS_*.md
+.claude/skills/cnblogs-publisher/RESUME_PROMPT_*.md
+.claude/skills/cnblogs-publisher/remaining_publish_queue_*.json
+.claude/skills/cnblogs-publisher/published_links_*.json
+
+# Playwright 浏览器 session（含登录凭证）
+.browser_profile/
+
+# 爬虫产出（图片、HTML 等临时文件）
+.agents/crawl-wechat/output/
+
+# 本地打包暂存
+.packs/
+.pack.conf
+.agents/*
+!.agents/skills/
+.agents/skills/*
+!.agents/skills/systematic-foundations-tutorial/
+!.agents/skills/systematic-foundations-tutorial/**
+.agents/skills/**/__pycache__/
+!.agents/skills/local-practice-problem-adder/
+!.agents/skills/local-practice-problem-adder/**
+!.agents/skills/interview-article-writer/
+!.agents/skills/interview-article-writer/**
+!.agents/skills/frontend-dev/
+!.agents/skills/frontend-dev/**
+tmp/pdfs/
+output/pdf/
+华为AI机考一周速成题单&攻略.pdf
+华为实习面试手撕10天备考速通规划.pdf

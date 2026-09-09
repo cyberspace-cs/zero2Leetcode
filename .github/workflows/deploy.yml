@@ -1,0 +1,85 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21.0.12+8.0.LTS'
+      - name: Validate browser scripts
+        run: |
+          node --check assets/js/acm-playground.js
+          node --check assets/js/acm-bridge.js
+          node --check assets/js/ai-assistant.js
+          node --check assets/js/java-runner-worker.js
+          node --check assets/js/playground-languages.js
+          node --check assets/js/playground.js
+      - name: Run Node tests
+        run: node --test tests/*.test.cjs
+      - name: Build and test Java browser runner
+        run: |
+          bash tools/java-browser-runner/build.sh
+          bash tools/java-browser-runner/test.sh
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+      - name: Verify browser deployment assets
+        run: |
+          test -s _site/acm-playground.html
+          test -s _site/playground.html
+          test -s _site/assets/css/acm-ai-assistant.css
+          test -s _site/assets/js/ai-assistant.js
+          test -s _site/assets/js/java-runner-worker.js
+          test -s _site/assets/js/playground-languages.js
+          test -s _site/assets/vendor/zero2leetcode-java-runner-20260803.jar
+          test -s _site/THIRD_PARTY_NOTICES.md
+          test -s _site/LICENSE-EPL-2.0.txt
+          test -s _site/third_party/temurin-21.0.12+8/NOTICE
+          test -s _site/third_party/temurin-21.0.12+8/release
+          test -s _site/third_party/temurin-21.0.12+8/legal/java.base/LICENSE
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './_site'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
