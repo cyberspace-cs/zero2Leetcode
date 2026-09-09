@@ -1,0 +1,2 @@
+date, problem_id, problem_title, difficulty, category, language, status, notes, link
+2026-09-09,0001,Two Sum,Easy,Hash Table,Python,not_started,Template created,https://leetcode.com/problems/two-sum/
