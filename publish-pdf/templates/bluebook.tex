@@ -13,15 +13,31 @@
 % ---- Fonts ----
 \usepackage{fontspec}
 \usepackage{xeCJK}
-\IfFontExistsTF{Source Han Serif SC}{
-  \setCJKmainfont{Source Han Serif SC}
-  \setCJKsansfont{Source Han Sans SC}
-  \setCJKmonofont{Source Han Sans SC}
-}{
-  \setCJKmainfont{STSong}[BoldFont=STHeiti,ItalicFont=STKaiti]
-  \setCJKsansfont{STHeiti}
-  \setCJKmonofont{STHeiti}
-}
+% 中文字体：主字体 / 无衬线 / 等宽 三者必须各自独立探测。
+% 注意 \IfFontExistsTF 会做模糊匹配（本机只有 "Source Han Serif SC Heavy"，
+% 但 \IfFontExistsTF{Source Han Serif SC} 仍返回真），所以用一个守卫包住三种字体，
+% 一旦其中某个真的缺失（例如 Source Han Sans SC）就会整块编译失败。
+% 最终兜底一律使用 Fandol —— 它随 TeX Live 分发，任何平台都必然存在。
+\IfFontExistsTF{Noto Serif CJK SC}{\setCJKmainfont{Noto Serif CJK SC}}{%
+\IfFontExistsTF{Songti SC}{\setCJKmainfont{Songti SC}}{%
+\IfFontExistsTF{SimSun}{\setCJKmainfont{SimSun}}{%
+\IfFontExistsTF{Microsoft YaHei UI}{\setCJKmainfont{Microsoft YaHei UI}}{%
+\IfFontExistsTF{Source Han Serif SC}{\setCJKmainfont{Source Han Serif SC}}{%
+\setCJKmainfont{FandolSong}%
+}}}}}
+
+\IfFontExistsTF{Noto Sans CJK SC}{\setCJKsansfont{Noto Sans CJK SC}}{%
+\IfFontExistsTF{PingFang SC}{\setCJKsansfont{PingFang SC}}{%
+\IfFontExistsTF{SimHei}{\setCJKsansfont{SimHei}}{%
+\IfFontExistsTF{Microsoft YaHei UI}{\setCJKsansfont{Microsoft YaHei UI}}{%
+\setCJKsansfont{FandolHei}%
+}}}}
+
+\IfFontExistsTF{Noto Sans Mono CJK SC}{\setCJKmonofont{Noto Sans Mono CJK SC}}{%
+\IfFontExistsTF{SimHei}{\setCJKmonofont{SimHei}}{%
+\IfFontExistsTF{Microsoft YaHei UI}{\setCJKmonofont{Microsoft YaHei UI}}{%
+\setCJKmonofont{FandolHei}%
+}}}
 \IfFontExistsTF{TeX Gyre Pagella}{
   \setmainfont{TeX Gyre Pagella}
 }{
@@ -35,7 +51,15 @@
 \IfFontExistsTF{JetBrains Mono}{
   \setmonofont{JetBrains Mono}[Scale=0.82]
 }{
-  \setmonofont{Menlo}[Scale=0.80]
+  \IfFontExistsTF{Consolas}{
+    \setmonofont{Consolas}[Scale=0.82]
+  }{
+    \IfFontExistsTF{DejaVu Sans Mono}{
+      \setmonofont{DejaVu Sans Mono}[Scale=0.80]
+    }{
+      \setmonofont{Courier New}[Scale=0.80]
+    }
+  }
 }
 
 % ---- Color system ----

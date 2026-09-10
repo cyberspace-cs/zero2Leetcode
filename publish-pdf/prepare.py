@@ -12,6 +12,7 @@ CHAPTER_NAMES = {
     2: "八股文",
     3: "大厂笔试真题",
     4: "其他知识",
+    5: "代码库与 ACM 题解",
 }
 
 COMPANY_NAMES = {
@@ -340,6 +341,21 @@ def build_chapter_four(repo_root: Path, output_dir: Path) -> Tuple[int, Path]:
     return count, output
 
 
+def build_chapter_five(repo_root: Path, output_dir: Path) -> Tuple[int, Path]:
+    """代码库与 ACM 题解：直接收录 06_code_archive 下的题解原文。"""
+    parts = ["# 代码库与 ACM 题解\n"]
+    count = 0
+    count += add_group(
+        parts,
+        "ACM 题解",
+        sorted((repo_root / "06_code_archive" / "problems").glob("*.md")),
+        repo_root,
+    )
+    output = output_dir / "05-code-archive.md"
+    output.write_text("\n".join(parts), encoding="utf-8")
+    return count, output
+
+
 def main() -> None:
     args = parse_args()
     repo_root = args.repo_root.resolve()
@@ -353,6 +369,7 @@ def main() -> None:
         2: build_chapter_two,
         3: build_chapter_three,
         4: build_chapter_four,
+        5: build_chapter_five,
     }
     total_sources = 0
     for number in chapters:

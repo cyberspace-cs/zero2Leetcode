@@ -212,16 +212,81 @@ python scripts/build-archive.py
 
 ### 生成这一页的 PDF
 
-PDF 由 Pandoc + XeLaTeX 链路产出，和蓝皮书同一套：
+PDF 由 Pandoc + XeLaTeX 链路产出，和蓝皮书同一套。`06_code_archive` 已经接成**第 5 章**：
 
 ```bash
-./publish-pdf/build.sh                                   # 完整编译
-./publish-pdf/build.sh --chapters 1 --output preview      # 只编译第 1 章做预览
+./publish-pdf/build.sh --chapters 5 --output zero2Leetcode-代码库   # 只编代码库这章
+./publish-pdf/build.sh                                             # 完整编译（1-4 章）
+./publish-pdf/build.sh --chapters 1 --output preview                # 只编译第 1 章做预览
 ```
 
-产物写入 `output/pdf/`，把它复制到 `downloads/` 并按上面步骤登记即可。
+产物写入 `output/pdf/`，把它复制到 `downloads/` 再同步清单即可：
+
+```bash
+cp output/pdf/zero2Leetcode-代码库.pdf downloads/
+python scripts/sync-downloads.py
+# 然后打开 _data/downloads.yml 补一下 title / desc
+```
 
 依赖：`pandoc`、`xelatex`、`pdfinfo`、`python3`。
+
+#### Windows 上的 pandoc 坑（重要）
+
+从 GitHub 下载的 `pandoc.exe` 约 233 MB，带 **Mark-of-the-Web**，直接运行会**静默卡住**（无输出、无报错），很容易误判成死循环。两个症状：
+
+- `pandoc --version` 长时间没有任何输出
+- 即使加了 `-halt-on-error` 也不结束
+
+解决办法是解除文件标记并给杀软时间：
+
+```powershell
+# 一次性解除整目录的下载标记
+Get-ChildItem D:\soft\pandoc -Recurse -File | Unblock-File
+
+# 之后再跑，第一次约 24 秒（杀软冷扫描），单次转换甚至要 3 分钟
+D:\soft\pandoc\pandoc-3.11\pandoc.exe --version
+```
+
+> 结论：**pandoc 不是卡死，是被杀软拖慢**。耐心等，不要中途 kill。
+> 若想彻底解决，可把 pandoc 目录加入 Windows Defender 的排除项（需要管理员权限）。
+
+#### 等宽字体回退（已修复）
+
+`templates/bluebook.tex` 原先的等宽字体回退链是 `JetBrains Mono` → `Menlo`，
+而 **Menlo 是 macOS 专有字体**，在 Windows/Linux 上会直接报错：
+
+```
+! Package fontspec Error: The font "Menlo" cannot be found.
+```
+
+现已改为四级回退，覆盖三大平台：
+
+```
+JetBrains Mono -> Consolas (Windows) -> DejaVu Sans Mono (Linux) -> Courier New
+```
+
+字体全部缺失时才会退到最后的 `Courier New`，一般不会触发。
+
+#### 分步调试技巧
+
+pandoc 启动很慢（杀软扫描），反复重跑很浪费时间。建议把两步拆开：
+
+```bash
+# 第 1 步：只生成 LaTeX 源码（慢，几分钟），出错时看这个文件
+pandoc 00-preface.md 05-code-archive.md --to=latex --standalone \
+    --template=publish-pdf/templates/bluebook.tex \
+    --metadata-file=publish-pdf/templates/metadata.yaml \
+    --top-level-division=chapter --syntax-highlighting=none \
+    -o build/code-archive.tex
+
+# 第 2 步：单独编译（快，约 10 秒），改字体/排版只需重跑这一步
+xelatex -interaction=nonstopmode -halt-on-error build/code-archive.tex
+```
+
+> 注意：`--no-highlight` 在 pandoc 3.x 已废弃，会打警告；改用 `--syntax-highlighting=none`。
+
+`publish-pdf/build.sh` 里的 `python3` 在 Windows 上可直接用（实测 Python 3.11.9），
+`xelatex` / `pdfinfo` 来自 TeX Live，加到 PATH 即可。
 
 ---
 
