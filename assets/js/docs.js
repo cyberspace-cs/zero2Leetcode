@@ -273,7 +273,7 @@ document.querySelectorAll(".nav-group-toggle").forEach(function (btn) {
     dislikeBtn.addEventListener('click', function () { vote('dislike'); });
     var h1 = document.querySelector('.doc-article h1');
     var title = h1 ? h1.textContent.trim() : document.title;
-    commentLink.href = 'https://github.com/ranxi2001/zero2Leetcode/issues/new'
+    commentLink.href = 'https://github.com/cyberspace-cs/zero2Leetcode/issues/new'
         + '?title=' + encodeURIComponent('[留言] ' + title)
         + '&body=' + encodeURIComponent('> 来自：[' + title + '](' + window.location.href + ')\n\n---\n\n')
         + '&labels=comment';

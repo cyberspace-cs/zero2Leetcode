@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="从零基础Python到LeetCode中等难度题目的系统性学习平台">
+    <meta name="keywords" content="LeetCode, Python, 算法, 数据结构, 面试, 笔试">
+    <title>Zero2Leetcode | 笔试/机试/面试真题</title>
+    <script>
+        (function(){var s=localStorage.getItem('z2l-theme');var t=s||(window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t);})();
+    </script>
+    <link rel="icon" type="image/svg+xml" href="../assets/images/logo.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css?v=5">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../" class="nav-logo">
+                <img src="../assets/images/logo.svg" alt="Logo" class="logo-icon">
+                <span class="logo-text">Zero2Leetcode</span>
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-dropdown">
+                    <button class="nav-dropdown-trigger" type="button">Zero 系列 ▾</button>
+                    <div class="nav-dropdown-menu">
+                        <a href="https://onefly.top/zero2Agent/" target="_blank" rel="noopener">zero2Agent <span>AI Agent 工程</span></a>
+                        <a href="https://onefly.top/zero2Leetcode/" target="_blank" rel="noopener">zero2Leetcode <span>程序设计算法刷题</span></a>
+                        <a href="https://onefly.top/zero2algo/" target="_blank" rel="noopener">zero2algo <span>算法岗求职</span></a>
+                        <a href="https://onefly.top/zero2PM/" target="_blank" rel="noopener">zero2PM <span>产品经理入门</span></a>
+                        <a href="https://onefly.top/zero2DA/" target="_blank" rel="noopener">zero2DA <span>数据分析入门</span></a>
+                    </div>
+                </li>
+                <li><a href="../#roadmap" class="nav-link" title="学习路线">路线</a></li>
+                <li><a href="../#modules" class="nav-link" title="知识模块">模块</a></li>
+                <li><a href="../#problems" class="nav-link" title="题目清单">题单</a></li>
+                <li><a href="./index.html" class="nav-link">笔试真题</a></li>
+                <li><a href="../05_interview/" class="nav-link">面试备战</a></li>
+                <li><a href="../playground.html" class="nav-link" title="本地力扣模拟">力扣模拟</a></li>
+                <li><a href="../acm-playground.html" class="nav-link">ACM 模拟</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a class="github-star-btn github-star-btn-compact" href="https://github.com/cyberspace-cs/zero2Leetcode" target="_blank" rel="noopener" aria-label="在 GitHub 为 zero2Leetcode 点 Star">
+                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .7a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56v-2.22c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.57-.29-5.27-1.29-5.27-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.47.11-3.05 0 0 .97-.31 3.16 1.18a10.94 10.94 0 0 1 5.76 0c2.19-1.49 3.16-1.18 3.16-1.18.63 1.58.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.41-2.71 5.39-5.29 5.68.42.36.79 1.06.79 2.14v3.16c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .7Z"/></svg>
+                    <span>Star</span>
+                    <span class="github-star-count" data-github-stars aria-label="GitHub Star 数量">—</span>
+                </a>
+                <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换主题" title="切换主题">
+                    <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                </button>
+                <button class="nav-toggle" aria-label="打开菜单">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <div class="hero-badge">🎯 面向求职者的算法学习平台</div>
+            <h1 class="hero-title">
+                <span class="gradient-text">笔试/机试/面试真题</span>
+            </h1>
+            <p class="hero-subtitle">
+                从真题拆解、策略复盘、代码表达，到岗位沟通，建设一条完整求职冲刺路线。
+            </p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">15+</span>
+                    <span class="stat-label">公司题库</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">100+</span>
+                    <span class="stat-label">真题文章</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">3</span>
+                    <span class="stat-label">复盘模块</span>
+                </div>
+            </div>
+            <div class="hero-actions">
+                <a href="#modules" class="btn btn-primary">开始查看</a>
+                <a href="../playground.html" class="btn btn-secondary">在线练习 →</a>
+                <a class="github-star-btn github-star-btn-hero" href="https://github.com/cyberspace-cs/zero2Leetcode" target="_blank" rel="noopener" aria-label="在 GitHub 为 zero2Leetcode 点 Star">
+                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .7a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56v-2.22c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.57-.29-5.27-1.29-5.27-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.47.11-3.05 0 0 .97-.31 3.16 1.18a10.94 10.94 0 0 1 5.76 0c2.19-1.49 3.16-1.18 3.16-1.18.63 1.58.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.41-2.71 5.39-5.29 5.68.42.36.79 1.06.79 2.14v3.16c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .7Z"/></svg>
+                    <span>GitHub Star 支持一下</span>
+                    <span class="github-star-count" data-github-stars aria-label="GitHub Star 数量">—</span>
+                </a>
+            </div>
+        </div>
+        <div class="hero-decoration">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span class="filename">interview-questions.py</span>
+                </div>
+                <pre class="code-content"><code><span class="keyword">def</span> <span class="function">real_interview_plan</span>():
+    <span class="comment"># 真题 · 机试 · 面试复盘</span>
+    <span class="keyword">return</span> [
+        <span class="string">"assessment"</span>,
+        <span class="string">"coding"</span>,
+        <span class="string">"interview"</span>
+    ]</code></pre>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="section modules" id="modules">
+            <div class="section-heading">
+                <span class="section-kicker">真题模块</span>
+                <h2>笔试 / 机试 / 面试通关内容结构</h2>
+            </div>
+            <div class="module-grid">
+                <article class="module-card">
+                    <span class="module-icon">01</span>
+                    <h3>笔试真题</h3>
+                    <p>针对市场热门企业的笔试题目、模考节奏与思路拆解。</p>
+                    <a href="alibaba/" class="card-link">查看笔试/机试 →</a>
+                </article>
+                <article class="module-card">
+                    <span class="module-icon">02</span>
+                    <h3>机试实战</h3>
+                    <p>从输入输出、代码完成度、正确性与复杂度控制着手训练。</p>
+                    <a href="huawei/" class="card-link">查看机试 →</a>
+                </article>
+                <article class="module-card">
+                    <span class="module-icon">03</span>
+                    <h3>面试复盘</h3>
+                    <p>围绕项目拆解、系统设计、沟通表达与自我陈述展开复盘。</p>
+                    <a href="../05_interview/" class="card-link">进入面试备战 →</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="section roadmap" id="roadmap">
+            <div class="section-heading">
+                <span class="section-kicker">训练线路</span>
+                <h2>真题路线图</h2>
+            </div>
+            <div class="roadmap-grid">
+                <div class="roadmap-item">
+                    <span class="roadmap-step">Step 01</span>
+                    <h3>考点速刷</h3>
+                    <p>先补齐最常出题的知识点和算法路径。</p>
+                </div>
+                <div class="roadmap-item">
+                    <span class="roadmap-step">Step 02</span>
+                    <h3>真题演练</h3>
+                    <p>围绕真实公司出题风格做专项压场。</p>
+                </div>
+                <div class="roadmap-item">
+                    <span class="roadmap-step">Step 03</span>
+                    <h3>面试复盘</h3>
+                    <p>强化项目讲解、逻辑表达与结果闭环。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-heading">
+                <span class="section-kicker">学习资料</span>
+                <h2>快速入口</h2>
+            </div>
+            <div class="problem-grid">
+                <a class="problem-card" href="index.md">
+                    <span class="problem-card-tag">文档</span>
+                    <h3>Interview Guide</h3>
+                    <p>查看真题与面试备战说明，建立求职路线图。</p>
+                </a>
+                <a class="problem-card" href="alibaba/">
+                    <span class="problem-card-tag">Alibaba</span>
+                    <h3>阿里题库</h3>
+                    <p>查看阿里笔试/机试/面试真题拆解记录。</p>
+                </a>
+                <a class="problem-card" href="huawei/">
+                    <span class="problem-card-tag">Huawei</span>
+                    <h3>华为题库</h3>
+                    <p>查看华为真题与机试对应的分析和复盘。</p>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="../assets/images/logo.svg" alt="Logo" class="logo-icon">
+                <span class="logo-text">Zero2Leetcode</span>
+            </div>
+            <div class="footer-links">
+                <a href="../#roadmap">路线</a>
+                <a href="../#modules">模块</a>
+                <a href="../#problems">题单</a>
+                <a href="../05_interview/">面试备战</a>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Zero2Leetcode. Made with ❤️ for coders.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/problems-data.js"></script>
+    <script src="../assets/js/app.js?v=2"></script>
+    <script src="../assets/js/github-stars.js?v=1"></script>
+</body>
+</html>

@@ -7,7 +7,7 @@
         return (Math.round(value / 100) / 10).toFixed(value < 10000 ? 1 : 0).replace(/\.0$/, '') + 'k';
     }
 
-    fetch('https://api.github.com/repos/ranxi2001/zero2Leetcode', {
+    fetch('https://api.github.com/repos/cyberspace-cs/zero2Leetcode', {
         headers: { 'Accept': 'application/vnd.github+json' }
     })
         .then(function (response) {
