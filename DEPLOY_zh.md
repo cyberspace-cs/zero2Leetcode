@@ -1,0 +1,187 @@
+# 部署与日常刷题流程
+
+本文档说明这个仓库的**发布方式**和**每天怎么刷题**。
+
+---
+
+## 一、站点是怎么构建的
+
+`zero2leetcode.taoxie.vip` 上的页面**不是手写的**，而是由 **Jekyll** 从 Markdown 源码渲染出来的。
+
+这和上游 `onefly.top/zero2Leetcode` 用的是同一套渲染链路，所以两边页面结构完全一致：
+
+```
+index.md  ──┐
+            ├─►  Jekyll  ─►  _site/  ─►  nginx  ─►  https://zero2leetcode.taoxie.vip/
+_layouts/   │
+assets/    ─┘
+```
+
+关键文件：
+
+| 路径 | 作用 |
+|------|------|
+| `_config.yml` | Jekyll 配置（title、插件、include） |
+| `_layouts/default.html` | 全站布局（导航栏、GitHub Star 按钮、页脚） |
+| `_data/nav.yml` | 导航菜单数据 |
+| `assets/css/docs.css` | 文档页样式（真题/面试页用这套） |
+| `assets/css/style.css` | 首页样式（`index.html` 用这套） |
+| `04_real_interviews/index.md` | 笔试真题页的**内容源文件** |
+| `05_interview/index.md` | 面试备战页的内容源文件 |
+
+> ⚠️ **重要**：`04_real_interviews/` 和 `05_interview/` 下**不要手写 `index.html`**。
+> 它们的页面内容来自同目录的 `index.md`，手写 `index.html` 会和 Jekyll 生成的结果冲突。
+> （这也是之前页面结构不对的原因。）
+
+### baseurl 的差异
+
+| 部署位置 | baseurl |
+|----------|---------|
+| `onefly.top/zero2Leetcode/`（子目录） | `/zero2Leetcode` |
+| `zero2leetcode.taoxie.vip`（根路径） | 空 |
+
+所以在本服务器构建时必须传 `--baseurl ""`，部署脚本已经处理好了。
+
+---
+
+## 二、发布到服务器
+
+### 前置条件（服务器已配置完成）
+
+```bash
+sudo apt-get install -y ruby-full jekyll build-essential
+sudo gem install jekyll-sitemap --no-document   # _config.yml 声明了该插件
+```
+
+### 一键发布
+
+服务器上仓库位于 `/home/ubuntu/shuati-coach/zero2Leetcode`：
+
+```bash
+cd /home/ubuntu/shuati-coach/zero2Leetcode
+bash scripts/deploy-server.sh
+```
+
+脚本会依次执行：
+
+1. `git fetch origin && git reset --hard origin/main` 同步源码
+2. 删除会冲突的手写 `index.html`（第 4、5 模块）
+3. `jekyll build --baseurl ""` 构建到 `_site/`
+4. 校验 `index.html`、`04_real_interviews/index.html`、`05_interview/index.html`、`assets/css/docs.css` 是否生成
+5. 把 nginx 的 `root` 指向 `_site/` 并 `reload`
+
+跳过 GitHub 同步（网络不通时）：
+
+```bash
+SKIP_PULL=1 bash scripts/deploy-server.sh
+```
+
+### 发布后自检
+
+```bash
+bash scripts/verify-deploy.sh
+```
+
+会检查构建产物、页面布局、公司分组、GitHub 链接、以及抽检一篇真题文章能否访问。
+
+### 网络不通时的备用方案
+
+如果服务器访问 GitHub 超时，可以**从本地直接推源码**：
+
+```bash
+# 本地：打包源码（排除 .git 和构建产物）
+tar -czf z2l-src.tar.gz --exclude=.git --exclude=_site .
+
+# 上传
+scp z2l-src.tar.gz ubuntu@43.143.231.106:/tmp/
+
+# 服务器：解包后重新构建
+ssh ubuntu@43.143.231.106
+cd /home/ubuntu/shuati-coach/zero2Leetcode
+rm -f 04_real_interviews/index.html 05_interview/index.html
+tar -xzf /tmp/z2l-src.tar.gz
+SKIP_PULL=1 bash scripts/deploy-server.sh
+```
+
+### nginx 配置
+
+`/etc/nginx/sites-available/zero2Leetcode-domain`：
+
+```nginx
+server {
+    listen 80;
+    listen [::]:80;
+    server_name zero2leetcode.taoxie.vip;
+
+    root /home/ubuntu/shuati-coach/zero2Leetcode/_site;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+        autoindex off;
+    }
+}
+```
+
+> `root` 必须指向 **`_site`**（构建产物），而不是仓库根目录。
+> 指向仓库根目录会看到目录列表，因为根目录里没有渲染好的 `04_real_interviews/index.html`。
+
+---
+
+## 三、每天怎么刷题
+
+完整说明见 [`records/README.md`](records/README.md)，这里是速查版。
+
+### 1. 登记一道题
+
+```bash
+python scripts/new_problem.py \
+    --id 1 --title "Two Sum" --difficulty Easy \
+    --category "Hash Table" --slug two-sum
+```
+
+一条命令做两件事：
+
+- 生成 `solutions/lc_0001_two_sum.py`（模板已预填题号、链接、日期）
+- 在 `records/daily_progress.csv` 追加一行
+
+只有题号也能用：
+
+```bash
+python scripts/new_problem.py --id 206
+```
+
+### 2. 写题解
+
+打开生成的 `solutions/lc_XXXX_*.py`，在 docstring 里写思路、复杂度、易错点，然后实现。
+
+### 3. 更新状态 + 写复盘
+
+- 把 `records/daily_progress.csv` 里对应行的 `status` 改成 `solved`
+- 复制当天复盘模板：`cp records/DAILY_TEMPLATE.md records/2026-09-10.md`
+
+### 4. 提交推送
+
+```bash
+git add -A
+git commit -m "feat: 0001 Two Sum"
+git push
+```
+
+推送后如果想同步到线上，再执行一次服务器发布命令。
+
+---
+
+## 四、目录速查
+
+| 目录 | 内容 |
+|------|------|
+| `00_python_basics/` | Python 基础 |
+| `01_data_structures/` | 数据结构 |
+| `02_algorithms/` | 核心算法 |
+| `03_leetcode_practice/` | LeetCode 题单 |
+| `04_real_interviews/` | **大厂笔试真题题库**（22 家公司） |
+| `05_interview/` | 面试备战（手撕 + 八股） |
+| `solutions/` | 你自己的解题代码 |
+| `records/` | 刷题记录与每日复盘 |
+| `scripts/` | 构建、部署、拓题脚本 |
