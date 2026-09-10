@@ -82,7 +82,7 @@ python scripts/new_problem.py --id 121 --title "Best Time to Buy and Sell Stock"
 ## 打包与发布
 
 `build-archive.py` 会同时把 `solutions/` 和 `06_code_archive/problems/` 打包成
-`downloads/zero2Leetcode-代码库.zip`，并把大小和 SHA-256 回写到 `_data/downloads.yml`。
+`downloads/zero2Leetcode-my-solutions-v0.1.0.zip`，并把大小和 SHA-256 回写到 `_data/downloads.yml`。
 
 ```bash
 python scripts/build-archive.py     # 重建索引 + 打包

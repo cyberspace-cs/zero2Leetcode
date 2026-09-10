@@ -7,8 +7,9 @@
 #   Linux/macOS : sha256sum downloads/<文件名>
 #   Windows     : Get-FileHash .\downloads\<文件名> -Algorithm SHA256
 #
-# 注意：file 为 zero2Leetcode-代码库.zip 的那条由 scripts/build-archive.py 自动维护，
+# 注意：file 为 zero2Leetcode-my-solutions-v0.1.0.zip 的那条由 scripts/build-archive.py 自动维护，
 #       手改 size/sha256 会在下次打包时被覆盖。
+#       size / sha256 也可以用 scripts/sync-downloads.py 一键重算。
 
 items:
   - title: "蓝皮书 · 完整版"
@@ -20,17 +21,23 @@ items:
   - title: "蓝皮书 · 高频手撕"
     file: "zero2Leetcode-bluebook-v0.1.0-high-frequency.pdf"
     desc: "第一章单独发行版，字节题单六大分类 118 道去重题，共 92 页"
-    size: "1.85 MB"
+    size: "1.9 MB"
     sha256: "2ed899e0a15543365b642c83ca2ae52db00445a11beb53c2218a59be55e89566"
 
   - title: "蓝皮书 · 源码包"
     file: "zero2Leetcode-bluebook-v0.1.0.zip"
     desc: "蓝皮书对应版本的完整站点源码，可用于本地构建"
-    size: "17.1 MB"
+    size: "17.2 MB"
     sha256: "4c0aaac35a3e5037325e021193b6e2e83e1de4a3e71a0c891f3d7601f084ca7f"
 
   - title: "我的代码库 · 源码包"
-    file: "zero2Leetcode-代码库.zip"
+    file: "zero2Leetcode-my-solutions-v0.1.0.zip"
     desc: "solutions/ 解题代码 + 06_code_archive/ ACM 题解，由 build-archive.py 自动打包"
     size: "5 KB"
     sha256: "b65c903724e681ce646b858a76c0eb734308891c8b3b8ed3c9c680dd9106564e"
+
+  - title: "代码库 & ACM 题解 · PDF"
+    file: "zero2Leetcode-code-archive-v0.1.0.pdf"
+    desc: "本页电子书：ACM 题解全文，由 Pandoc + XeLaTeX 从 06_code_archive 编译"
+    size: "1.3 MB"
+    sha256: "bb485d03ab3de8c6d97d4f8ef8359e683a0bad302d3dfe24258abe03cd23ddbb"

@@ -182,7 +182,7 @@ git push
 solutions/*.py 的 docstring ──┐
                               ├──► scripts/build-archive.py ──┬──► _data/code_library.yml
 06_code_archive/problems/*.md ┤                               ├──► _data/acm_problems.yml
-                              │                               └──► downloads/zero2Leetcode-代码库.zip
+                              │                               └──► downloads/zero2Leetcode-my-solutions-v0.1.0.zip
 _data/downloads.yml（手工维护）──┴──► 下载中心表（sha256 自动回写）
 ```
 
@@ -208,27 +208,40 @@ python scripts/build-archive.py
 2. 在 `_data/downloads.yml` 加一条记录（`file` / `title` / `desc` / `size` / `sha256`）
 3. `git push` 后服务器重建
 
-> `file` 为 `zero2Leetcode-代码库.zip` 的那条由脚本自动维护，手改会被覆盖。
+> `file` 为 `zero2Leetcode-my-solutions-v0.1.0.zip` 的那条由脚本自动维护，手改会被覆盖。
 
 ### 生成这一页的 PDF
 
 PDF 由 Pandoc + XeLaTeX 链路产出，和蓝皮书同一套。`06_code_archive` 已经接成**第 5 章**：
 
 ```bash
-./publish-pdf/build.sh --chapters 5 --output zero2Leetcode-代码库   # 只编代码库这章
-./publish-pdf/build.sh                                             # 完整编译（1-4 章）
-./publish-pdf/build.sh --chapters 1 --output preview                # 只编译第 1 章做预览
+./publish-pdf/build.sh --chapters 5 --output zero2Leetcode-code-archive-v0.1.0  # 只编代码库这章
+./publish-pdf/build.sh                                                          # 完整编译（1-4 章）
+./publish-pdf/build.sh --chapters 1 --output preview                            # 只编译第 1 章做预览
 ```
 
 产物写入 `output/pdf/`，把它复制到 `downloads/` 再同步清单即可：
 
 ```bash
-cp output/pdf/zero2Leetcode-代码库.pdf downloads/
+cp output/pdf/zero2Leetcode-code-archive-v0.1.0.pdf downloads/
 python scripts/sync-downloads.py
 # 然后打开 _data/downloads.yml 补一下 title / desc
 ```
 
 依赖：`pandoc`、`xelatex`、`pdfinfo`、`python3`。
+
+#### Windows 一键脚本（推荐）
+
+Windows 上直接用 `scripts/build-code-pdf.ps1`，它会分两步执行并把结果放进 `downloads/`：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-code-pdf.ps1
+python scripts/sync-downloads.py
+```
+
+> 该脚本刻意把 pandoc 和 xelatex 拆开：pandoc 启动极慢（杀软扫描），
+> 而排版/字体出问题时只需重跑 xelatex 那一步（约 15 秒），不必再等 pandoc。
+> 用 `PANDOC` 环境变量可指定 pandoc 路径。
 
 #### Windows 上的 pandoc 坑（重要）
 

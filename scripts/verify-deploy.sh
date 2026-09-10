@@ -84,7 +84,8 @@ echo "== 5. 下载资产可达性 =="
 for f in zero2Leetcode-bluebook-v0.1.0-full.pdf \
          zero2Leetcode-bluebook-v0.1.0-high-frequency.pdf \
          zero2Leetcode-bluebook-v0.1.0.zip \
-         zero2Leetcode-代码库.zip; do
+         zero2Leetcode-my-solutions-v0.1.0.zip \
+         zero2Leetcode-code-archive-v0.1.0.pdf; do
     code="$(curl -s -o /dev/null -w '%{http_code}' "$BASE/downloads/$f")"
     printf '  %-52s HTTP %s\n' "$f" "$code"
     check "可下载 $f" "$([ "$code" = "200" ] && echo ok)"

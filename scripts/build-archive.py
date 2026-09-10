@@ -6,7 +6,7 @@
 
   1. 扫描 solutions/*.py        -> 生成 _data/code_library.yml
   2. 扫描 06_code_archive/problems/*.md -> 生成 _data/acm_problems.yml
-  3. 打包上述内容                -> downloads/zero2Leetcode-代码库.zip
+  3. 打包上述内容                -> downloads/zero2Leetcode-my-solutions-v0.1.0.zip
      并把 zip 的大小与 SHA-256 写回 _data/downloads.yml
 
 用法：
@@ -36,7 +36,7 @@ CODE_LIBRARY_YML = DATA_DIR / "code_library.yml"
 ACM_PROBLEMS_YML = DATA_DIR / "acm_problems.yml"
 DOWNLOADS_YML = DATA_DIR / "downloads.yml"
 
-ARCHIVE_NAME = "zero2Leetcode-代码库.zip"
+ARCHIVE_NAME = "zero2Leetcode-my-solutions-v0.1.0.zip"
 ARCHIVE_PATH = DOWNLOADS_DIR / ARCHIVE_NAME
 
 # zip 内条目的固定时间戳，保证内容不变时打包结果稳定
