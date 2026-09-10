@@ -62,6 +62,41 @@ else
 fi
 
 rm -f "$TMP"
+
+echo
+echo "== 4. 代码库 & ACM 题解页 =="
+ARCH="$BASE/06_code_archive/index.html"
+TMP2="$(mktemp)"
+ACODE="$(curl -s -o "$TMP2" -w '%{http_code}' "$ARCH")"
+echo "  HTTP $ACODE, $(wc -c <"$TMP2") bytes"
+check "代码库页返回 200" "$([ "$ACODE" = "200" ] && echo ok)"
+check "渲染了下载中心" "$(grep -o '下载中心' "$TMP2" | head -1)"
+check "渲染了 ACM 题解索引" "$(grep -o 'ACM 题解索引' "$TMP2" | head -1)"
+check "渲染了本地代码库" "$(grep -o '本地代码库' "$TMP2" | head -1)"
+check "ACM 题目已入索引" "$(grep -o 'CF 4A Watermelon' "$TMP2" | head -1)"
+check "代码库文件已入索引" "$(grep -o 'lc_0206_reverse-linked-list.py' "$TMP2" | head -1)"
+check "下载表含完整 SHA-256" \
+    "$(grep -o '026901c393dad5a0b87d0cd9a826d7f1885db27d4ce5d4d80b5969e32c9941d9' "$TMP2" | head -1)"
+check "侧边栏已加入新模块" "$(grep -o '06_code_archive' "$TMP2" | head -1)"
+
+echo
+echo "== 5. 下载资产可达性 =="
+for f in zero2Leetcode-bluebook-v0.1.0-full.pdf \
+         zero2Leetcode-bluebook-v0.1.0-high-frequency.pdf \
+         zero2Leetcode-bluebook-v0.1.0.zip \
+         zero2Leetcode-代码库.zip; do
+    code="$(curl -s -o /dev/null -w '%{http_code}' "$BASE/downloads/$f")"
+    printf '  %-52s HTTP %s\n' "$f" "$code"
+    check "可下载 $f" "$([ "$code" = "200" ] && echo ok)"
+done
+
+echo
+echo "== 6. ACM 题解文章 =="
+PCODE="$(curl -s -o /dev/null -w '%{http_code}' "$BASE/06_code_archive/problems/cf-4a-watermelon/")"
+echo "  HTTP $PCODE"
+check "ACM 题解文章可访问" "$([ "$PCODE" = "200" ] && echo ok)"
+
+rm -f "$TMP2"
 echo
 echo "结果: $PASS 通过, $FAIL 失败"
 [ "$FAIL" -eq 0 ]

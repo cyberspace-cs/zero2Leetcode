@@ -1,0 +1,36 @@
+# 下载中心配置
+#
+# 每一项对应 downloads/ 目录下的一个文件。
+# 新增资料时：把文件放进 downloads/，然后在这里加一条记录。
+#
+# 算 SHA-256：
+#   Linux/macOS : sha256sum downloads/<文件名>
+#   Windows     : Get-FileHash .\downloads\<文件名> -Algorithm SHA256
+#
+# 注意：file 为 zero2Leetcode-代码库.zip 的那条由 scripts/build-archive.py 自动维护，
+#       手改 size/sha256 会在下次打包时被覆盖。
+
+items:
+  - title: "蓝皮书 · 完整版"
+    file: "zero2Leetcode-bluebook-v0.1.0-full.pdf"
+    desc: "高频手撕 + 八股文 + 大厂笔试真题 + 其他知识，共 1392 页"
+    size: "6.6 MB"
+    sha256: "026901c393dad5a0b87d0cd9a826d7f1885db27d4ce5d4d80b5969e32c9941d9"
+
+  - title: "蓝皮书 · 高频手撕"
+    file: "zero2Leetcode-bluebook-v0.1.0-high-frequency.pdf"
+    desc: "第一章单独发行版，字节题单六大分类 118 道去重题，共 92 页"
+    size: "1.85 MB"
+    sha256: "2ed899e0a15543365b642c83ca2ae52db00445a11beb53c2218a59be55e89566"
+
+  - title: "蓝皮书 · 源码包"
+    file: "zero2Leetcode-bluebook-v0.1.0.zip"
+    desc: "蓝皮书对应版本的完整站点源码，可用于本地构建"
+    size: "17.1 MB"
+    sha256: "4c0aaac35a3e5037325e021193b6e2e83e1de4a3e71a0c891f3d7601f084ca7f"
+
+  - title: "我的代码库 · 源码包"
+    file: "zero2Leetcode-代码库.zip"
+    desc: "solutions/ 解题代码 + 06_code_archive/ ACM 题解，由 build-archive.py 自动打包"
+    size: "5 KB"
+    sha256: "b65c903724e681ce646b858a76c0eb734308891c8b3b8ed3c9c680dd9106564e"

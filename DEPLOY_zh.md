@@ -172,6 +172,59 @@ git push
 
 ---
 
+## 三、代码库与 ACM 题解模块
+
+`06_code_archive/` 是个人代码库与竞赛题目档案页，页面上的三张表全部由脚本生成，不要手写。
+
+### 三条数据流
+
+```
+solutions/*.py 的 docstring ──┐
+                              ├──► scripts/build-archive.py ──┬──► _data/code_library.yml
+06_code_archive/problems/*.md ┤                               ├──► _data/acm_problems.yml
+                              │                               └──► downloads/zero2Leetcode-代码库.zip
+_data/downloads.yml（手工维护）──┴──► 下载中心表（sha256 自动回写）
+```
+
+### 新增代码
+
+```bash
+python scripts/new_problem.py --id 121 --title "Best Time to Buy and Sell Stock" \
+    --difficulty Easy --category "Greedy" --slug best-time-to-buy-and-sell-stock
+python scripts/build-archive.py     # 重建索引 + 重新打包
+```
+
+### 新增 ACM 题解
+
+```bash
+cp 06_code_archive/_template.md 06_code_archive/problems/cf-1234a-example.md
+# 编辑：front matter 的 title/eyebrow/permalink + 正文的「题目信息」表
+python scripts/build-archive.py
+```
+
+### 新增下载资料（PDF / 压缩包）
+
+1. 文件放进 `downloads/`
+2. 在 `_data/downloads.yml` 加一条记录（`file` / `title` / `desc` / `size` / `sha256`）
+3. `git push` 后服务器重建
+
+> `file` 为 `zero2Leetcode-代码库.zip` 的那条由脚本自动维护，手改会被覆盖。
+
+### 生成这一页的 PDF
+
+PDF 由 Pandoc + XeLaTeX 链路产出，和蓝皮书同一套：
+
+```bash
+./publish-pdf/build.sh                                   # 完整编译
+./publish-pdf/build.sh --chapters 1 --output preview      # 只编译第 1 章做预览
+```
+
+产物写入 `output/pdf/`，把它复制到 `downloads/` 并按上面步骤登记即可。
+
+依赖：`pandoc`、`xelatex`、`pdfinfo`、`python3`。
+
+---
+
 ## 四、目录速查
 
 | 目录 | 内容 |
@@ -182,6 +235,8 @@ git push
 | `03_leetcode_practice/` | LeetCode 题单 |
 | `04_real_interviews/` | **大厂笔试真题题库**（22 家公司） |
 | `05_interview/` | 面试备战（手撕 + 八股） |
+| `06_code_archive/` | **代码库 & ACM 题解**（含下载中心） |
+| `downloads/` | 对外发布的可下载资料（PDF / 压缩包） |
 | `solutions/` | 你自己的解题代码 |
 | `records/` | 刷题记录与每日复盘 |
-| `scripts/` | 构建、部署、拓题脚本 |
+| `scripts/` | 构建、部署、拓题、打包脚本 |
