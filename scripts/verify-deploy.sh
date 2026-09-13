@@ -75,6 +75,8 @@ check "渲染了 ACM 题解索引" "$(grep -o 'ACM 题解索引' "$TMP2" | head 
 check "渲染了本地代码库" "$(grep -o '本地代码库' "$TMP2" | head -1)"
 check "ACM 题目已入索引" "$(grep -o 'CF 4A Watermelon' "$TMP2" | head -1)"
 check "代码库文件已入索引" "$(grep -o 'lc_0206_reverse-linked-list.py' "$TMP2" | head -1)"
+check "外部仓库条目已入索引" "$(grep -o 'leetcode/ACM-lc/HOT100' "$TMP2" | head -1)"
+check "外部仓库题名已渲染" "$(grep -o '最长连续序列' "$TMP2" | head -1)"
 check "下载表含完整 SHA-256" \
     "$(grep -o '026901c393dad5a0b87d0cd9a826d7f1885db27d4ce5d4d80b5969e32c9941d9' "$TMP2" | head -1)"
 check "侧边栏已加入新模块" "$(grep -o '06_code_archive' "$TMP2" | head -1)"

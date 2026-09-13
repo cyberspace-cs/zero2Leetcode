@@ -4,7 +4,7 @@
 
 一条命令完成三件事：
 
-  1. 扫描 solutions/*.py        -> 生成 _data/code_library.yml
+  1. 扫描 solutions/*.py 与外部做题仓库 -> 生成 _data/code_library.yml
   2. 扫描 06_code_archive/problems/*.md -> 生成 _data/acm_problems.yml
   3. 打包上述内容                -> downloads/zero2Leetcode-my-solutions-v0.1.0.zip
      并把 zip 的大小与 SHA-256 写回 _data/downloads.yml
@@ -13,6 +13,13 @@
 
     python scripts/build-archive.py
 
+外部做题仓库（Gitee: buleboy8065/leetcode）默认取本仓库的同级目录 `../leetcode`，
+可用环境变量覆盖：
+
+    LEETCODE_REPO=D:/path/to/leetcode python scripts/build-archive.py
+
+该目录不存在时会**保留上次生成的条目**（服务器上构建时不需要这个仓库）。
+
 每次新增题目或代码后跑一次即可，页面索引和下载包会同步更新。
 """
 
@@ -20,6 +27,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import sys
 import zipfile
@@ -32,6 +40,10 @@ ACM_DIR = ROOT / "06_code_archive" / "problems"
 DATA_DIR = ROOT / "_data"
 DOWNLOADS_DIR = ROOT / "downloads"
 
+# 外部的 LeetCode / ACM 做题仓库（Gitee 上的 buleboy8065/leetcode）。
+# 它位于本项目之外，属于「本地历史代码库」，通过环境变量可指向任意位置。
+LEETCODE_REPO = Path(os.environ.get("LEETCODE_REPO") or (ROOT.parent / "leetcode"))
+
 CODE_LIBRARY_YML = DATA_DIR / "code_library.yml"
 ACM_PROBLEMS_YML = DATA_DIR / "acm_problems.yml"
 DOWNLOADS_YML = DATA_DIR / "downloads.yml"
@@ -42,8 +54,8 @@ ARCHIVE_PATH = DOWNLOADS_DIR / ARCHIVE_NAME
 # zip 内条目的固定时间戳，保证内容不变时打包结果稳定
 ZIP_TIMESTAMP = (2026, 1, 1, 0, 0, 0)
 
-# 打包时跳过的目录/文件
-SKIP_DIRS = {"__pycache__", ".pytest_cache", ".ipynb_checkpoints"}
+# 打包时跳过的目录/文件（.git 是外部做题仓库里必须排除的）
+SKIP_DIRS = {".git", "__pycache__", ".pytest_cache", ".ipynb_checkpoints", ".idea", ".vscode"}
 SKIP_FILES = {".DS_Store", "Thumbs.db"}
 
 
@@ -107,6 +119,39 @@ def parse_solution(path: Path) -> dict:
         "topic": info.get("topic") or "—",
         "date": info.get("date") or "—",
         "link": info.get("link") or "",
+        "source": "solutions/",
+    }
+
+
+# 外部仓库命名：LC <题号>-<题名>.py，例如 "LC 1-两数之和.py"
+LC_FILENAME_RE = re.compile(r"^LC\s*(\d+)\s*[-–—]\s*(.+?)\.py$", re.IGNORECASE)
+# 误操作产生的副本后缀：" copy 2"
+COPY_SUFFIX_RE = re.compile(r"\s+copy(\s*\d+)?$", re.IGNORECASE)
+
+
+def parse_leetcode_solution(path: Path, repo_root: Path) -> dict:
+    """解析外部做题仓库里的 LC 题解文件。
+
+    这些文件没有 docstring 元数据，题号/题名全部取自文件名，
+    所在子目录作为「来源」（例如 leetcode/ACM-lc/HOT100）。
+    """
+    m = LC_FILENAME_RE.match(path.name)
+    problem_id = m.group(1) if m else "—"
+    title = m.group(2).strip() if m else path.stem
+    title = COPY_SUFFIX_RE.sub("", title).strip() or path.stem
+
+    parent = path.parent.relative_to(repo_root)
+    source = "leetcode" if str(parent) == "." else f"leetcode/{parent.as_posix()}"
+
+    return {
+        "name": path.name,
+        "problem_id": problem_id,
+        "title": title,
+        "difficulty": "—",
+        "topic": "—",
+        "date": "—",
+        "link": "",
+        "source": source,
     }
 
 
@@ -186,6 +231,7 @@ def write_code_library(entries: list[dict]) -> None:
     ]
     for e in entries:
         lines.append(f"  - name: {q(e['name'])}")
+        lines.append(f"    source: {q(e.get('source', '—'))}")
         lines.append(f"    problem_id: {q(e['problem_id'])}")
         lines.append(f"    title: {q(e['title'])}")
         lines.append(f"    difficulty: {q(e['difficulty'])}")
@@ -226,12 +272,17 @@ def human_size(num_bytes: int) -> str:
 
 
 def build_zip() -> tuple[int, str]:
-    """打包 solutions/ 与 ACM 题解，返回 (字节数, sha256)。"""
+    """打包 solutions/、ACM 题解与外部做题仓库，返回 (字节数, sha256)。"""
     DOWNLOADS_DIR.mkdir(parents=True, exist_ok=True)
 
     members: list[tuple[Path, str]] = []
-    for src_dir, prefix in ((SOLUTIONS_DIR, "solutions"), (ACM_DIR, "06_code_archive/problems")):
-        if not src_dir.exists():
+    sources = [
+        (SOLUTIONS_DIR, "solutions"),
+        (ACM_DIR, "06_code_archive/problems"),
+        (LEETCODE_REPO, "leetcode"),
+    ]
+    for src_dir, prefix in sources:
+        if not src_dir.is_dir():
             continue
         for path in sorted(src_dir.rglob("*")):
             if not path.is_file():
@@ -292,6 +343,33 @@ def update_downloads(archive_size: str, archive_sha: str) -> bool:
 
 # ---------------------------------------------------------------------------
 
+def load_preserved_external_entries() -> list[dict]:
+    """外部仓库不存在时，复用上次生成的外部条目。
+
+    服务器（或 CI）上只有本仓库，没有同级目录的 leetcode 仓库，
+    此时不能把外部记录清空，否则页面索引会莫名少掉一大块。
+    """
+    if not CODE_LIBRARY_YML.exists():
+        return []
+
+    out: list[dict] = []
+    cur: dict[str, str] | None = None
+    for line in CODE_LIBRARY_YML.read_text(encoding="utf-8").splitlines():
+        m = re.match(r'^\s*-\s+(\w+):\s*"(.*)"\s*$', line)
+        if m:
+            if cur and str(cur.get("source", "")).startswith("leetcode"):
+                out.append(cur)
+            cur = {m.group(1): m.group(2)}
+            continue
+        m = re.match(r'^\s+(\w+):\s*"(.*)"\s*$', line)
+        if m and cur is not None:
+            cur[m.group(1)] = m.group(2)
+
+    if cur and str(cur.get("source", "")).startswith("leetcode"):
+        out.append(cur)
+    return out
+
+
 def main() -> int:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -301,10 +379,27 @@ def main() -> int:
         for p in sorted(SOLUTIONS_DIR.glob("*.py"))
         if p.name != "solution_template.py"
     ]
+    print(f"   -> {len(entries)} 个文件")
+
+    print("== 2. 扫描外部做题仓库 ==")
+    print(f"   路径: {LEETCODE_REPO}")
+    if LEETCODE_REPO.is_dir():
+        lc_entries = [
+            parse_leetcode_solution(p, LEETCODE_REPO)
+            for p in sorted(LEETCODE_REPO.rglob("*.py"))
+            if not any(part in SKIP_DIRS for part in p.relative_to(LEETCODE_REPO).parts)
+        ]
+        print(f"   -> {len(lc_entries)} 个文件")
+        entries += lc_entries
+    else:
+        preserved = load_preserved_external_entries()
+        print(f"   ! 目录不存在，保留上次索引中的 {len(preserved)} 条外部记录")
+        entries += preserved
+
     write_code_library(entries)
     print(f"   -> _data/code_library.yml  ({len(entries)} 个文件)")
 
-    print("== 2. 扫描 ACM 题解 06_code_archive/problems/ ==")
+    print("== 3. 扫描 ACM 题解 06_code_archive/problems/ ==")
     problems = []
     if ACM_DIR.exists():
         for p in sorted(ACM_DIR.glob("*.md")):
@@ -314,7 +409,7 @@ def main() -> int:
     write_acm_problems(problems)
     print(f"   -> _data/acm_problems.yml  ({len(problems)} 道题)")
 
-    print("== 3. 打包源码压缩包 ==")
+    print("== 4. 打包源码压缩包 ==")
     size_bytes, sha = build_zip()
     size_human = human_size(size_bytes)
     print(f"   -> downloads/{ARCHIVE_NAME}  ({size_human})")

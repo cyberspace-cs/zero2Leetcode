@@ -22,8 +22,54 @@
 | 页面区块 | 数据来源 | 生成的中间文件 |
 |----------|----------|----------------|
 | 下载中心 | `_data/downloads.yml` | 手工维护 |
-| 本地代码库 | `solutions/*.py` 的 docstring | `_data/code_library.yml` |
+| 本地代码库 | `solutions/*.py` 的 docstring + 外部做题仓库的文件名 | `_data/code_library.yml` |
 | ACM 题解索引 | `06_code_archive/problems/*.md` 的 front matter | `_data/acm_problems.yml` |
+
+## 外部做题仓库（leetcode）
+
+除了本仓库的 `solutions/`，索引还会扫描**同级目录下的外部做题仓库**，也就是你历史刷题的地方：
+
+| 项 | 值 |
+|---|---|
+| 远端 | `https://gitee.com/buleboy8065/leetcode.git` |
+| 本地位置 | `../leetcode`（相对本仓库根目录，即 `diy-code/leetcode`） |
+| 命名约定 | `LC <题号>-<题名>.py`，例如 `LC 1-两数之和.py` |
+| 来源列 | 取相对仓库根的子目录，例如 `leetcode/ACM-lc/HOT100` |
+
+### 首次克隆
+
+```bash
+cd diy-code
+git clone https://gitee.com/buleboy8065/leetcode.git leetcode
+```
+
+### 日常更新
+
+```bash
+cd diy-code/leetcode
+git pull
+cd ../zero2Leetcode
+python scripts/build-archive.py      # 重新扫描并打包
+git add -A && git commit -m "chore: 同步做题仓库" && git push
+```
+
+### 指向别的位置
+
+仓库不在默认位置时，用环境变量指定：
+
+```bash
+LEETCODE_REPO=D:/path/to/leetcode python scripts/build-archive.py
+```
+
+> 目录不存在时会**保留上次生成的条目**，不会把索引清空
+> （服务器上构建站点时并没有这个外部仓库，靠的就是这个降级逻辑）。
+
+### 说明
+
+- 文件名里的 `copy 2`、`copy 3` 等重复副本后缀会在索引里自动去掉；
+  但重复文件本身不会被删除，需要你自己在 leetcode 仓库里清理。
+- 外部文件没有 docstring 元数据，所以「难度」「考点」列显示 `—`。
+  若想补全，可改用 `solutions/` 的格式（用 `scripts/new_problem.py` 生成）。
 
 ## 新增一道 ACM 题
 

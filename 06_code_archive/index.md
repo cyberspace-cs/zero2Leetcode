@@ -15,7 +15,10 @@ eyebrow: Module 07
 
 本模块把两样东西集中管理：
 
-- **本地代码库**：`solutions/` 目录下所有解过的题，按统一命名规范存放，每道题带题号、标题、难度、考点
+- **本地代码库**：两个来源汇总
+  - `solutions/`：按统一命名规范整理的解题文件，带题号、标题、难度、考点
+  - `leetcode/`：**同步自外部做题仓库**（[Gitee buleboy8065/leetcode](https://gitee.com/buleboy8065/leetcode)）的历史代码，
+    以 ACM 模式书写（`input()` 读入、`main()` 入口），题面以注释附在文件末尾
 - **ACM 题解**：`06_code_archive/problems/` 下的竞赛题目，含题意、思路、代码、复杂度与易错点
 
 所有内容都会被打包成**源码压缩包**，和 PDF 电子书一起放在下面的下载中心。
@@ -71,13 +74,14 @@ Get-FileHash .\zero2Leetcode-bluebook-v0.1.0-full.pdf -Algorithm SHA256
 {% if site.data.code_library.files.size > 0 -%}
 共 {{ site.data.code_library.count }} 个文件，最近更新：{{ site.data.code_library.generated_at }}。
 
-| 文件 | 题号 | 标题 | 难度 | 考点 |
-|------|------|------|------|------|
+| 文件 | 来源 | 题号 | 标题 | 难度 | 考点 |
+|------|------|------|------|------|------|
 {% for f in site.data.code_library.files -%}
-| `{{ f.name }}` | {{ f.problem_id }} | {{ f.title }} | {{ f.difficulty }} | {{ f.topic }} |
+| `{{ f.name }}` | `{{ f.source }}` | {{ f.problem_id }} | {{ f.title }} | {{ f.difficulty }} | {{ f.topic }} |
 {% endfor %}
 
 > 代码文件本身不单独在网页上发布，统一通过上面的**源码压缩包**下载。
+> `solutions/` 是本站在用的规范格式；`leetcode/` 是同步自外部做题仓库的历史代码。
 {%- else -%}
 `solutions/` 目录还没有代码。用下面这条命令添加第一道题：
 
